@@ -27,7 +27,7 @@ pip install gbif-dl
 The usage of `gbif-dl` helps users to create their own GBIF based media pipeline for training machine learning models. The package provides two core functionalities as followed:
 
 1. `gbif-dl.generators`: Generators provide image urls from the GBIF database given queries or a pre-defined URL.
-2. `gbif-dl.io`: Provides efficient media downloading to write the data to a storage device.
+2. `gbif-dl.stores`: Provides efficient media downloading to write the data to a storage device.
 
 ### 1. Retrieve media urls from GBIF
 
