@@ -1,6 +1,4 @@
-# gbif-dl 🌱 > 💾
-
-[![Build Status](https://github.com/plantnet/gbif-dl/workflows/CI/badge.svg)](https://github.com/plantnet/gbif-dl/actions?query=workflow%3ACI+branch%3Amaster+event%3Apush)
+# gbif-dl  ![Project Icon](https://github.com/KaneLindsay/gbif-dl/blob/master/img/gbif_dl_icon.png?raw=true) 🌱 > 💾
 [![Supported Python versions](https://img.shields.io/pypi/pyversions/gbif-dl.svg)](https://pypi.python.org/pypi/gbif-dl)
 [![Documentation Status](https://img.shields.io/badge/docs-api-blue)](https://plantnet.github.io/gbif-dl/)
 
@@ -29,7 +27,13 @@ The usage of `gbif-dl` helps users to create their own GBIF based media pipeline
 1. `gbif-dl.generators`: Generators provide image urls from the GBIF database given queries or a pre-defined URL.
 2. `gbif-dl.stores`: Provides efficient media downloading to write the data to a storage device.
 
-### 1. Retrieve media urls from GBIF
+### GUI
+![Graphical User Interface](https://github.com/KaneLindsay/gbif-dl/blob/master/img/gbif_dl_gui.png?raw=true)
+
+A GUI can be accessed by running `GUI.py`. The GUI provides an interface to both query-based occurence API downloads using a modular query builder and DOI-based downloads from a pre-existing DWCA. Queries can be saved to disk and loaded for easy re-downloading.
+An image gallery widget allows for the quick inspection of downloaded images.
+
+### Retrieve media urls from GBIF
 
 `gbif-dl` supports two ways to retrieve image urls. One is to use directly query the gbif api the `gbif_dl.api` module. This is suited for quickly retrieving smaller datasets that do not require extensive query parameters. Another way is to use already the [gbif download workflows](https://www.gbif.org/data-processing) which assemble a [Darwin Core Archives](https://github.com/gbif/ipt/wiki/DwCAHowToGuide) waiting on the gbif servers. These can be downloaded and parsed using the `gbif_dl.dwca` module as explained below.
 
