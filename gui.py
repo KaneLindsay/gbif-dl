@@ -228,7 +228,7 @@ class GBIFDownloader(tk.Tk):
             for value in values:
                 key_var = tk.StringVar(value=key)
                 value_var = tk.StringVar(value=value)
-                key_entry = ttk.Combobox(self.query_content, textvariable=key_var, width=25, values=self.occurence_keys)
+                key_entry = ttk.Combobox(self.query_content, textvariable=key_var, width=25, values=self.occurrence_keys)
                 value_entry = ttk.Entry(self.query_content, textvariable=value_var, width=25)
                 row = len(self.query_entries)
                 key_entry.grid(row=row, column=0, padx=10, pady=5)
@@ -253,7 +253,7 @@ class GBIFDownloader(tk.Tk):
 
     def download_images_query(self) -> None:
         """
-        Download images from the GBIF occurence API using the query built in the query builder and gbif-dl.
+        Download images from the GBIF occurrence API using the query built in the query builder and gbif-dl.
         Display a sample of the downloaded images in the gallery after complete.
         """
         self.build_query()
@@ -279,7 +279,7 @@ class GBIFDownloader(tk.Tk):
 
     def download_images_doi(self) -> None:
         """
-        Download images from the GBIF occurence API using a DOI to a pre-existing DWCA and gbif-dl.
+        Download images from the GBIF occurrence API using a DOI to a pre-existing DWCA and gbif-dl.
         """
         if not self.output_dir.get():
             self.stats_label.config(text="Download Status: DOI not entered.")
