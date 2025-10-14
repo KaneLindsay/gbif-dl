@@ -15,6 +15,8 @@ class GBIFDownloader(tk.Tk):
 
         self.download_stats = None
 
+        self.cancel_event = threading.Event()
+
         # Set application icon
         self.icon_path = "img/gbif_dl_icon.png"  # Placeholder path for the logo
         self.icon_image = tk.PhotoImage(file=self.icon_path)
@@ -129,7 +131,7 @@ class GBIFDownloader(tk.Tk):
         self.start_button = ttk.Button(self, text="Begin Download", style="TButton", command=self.start_download)
         self.start_button.grid(row=4, column=0, columnspan=3, padx=10, pady=10, sticky="EW")
 
-        self.stop_button = ttk.Button(self, text="Stop Download", style="TButton", command=self.stop_download, state="disabled")
+        self.stop_button = ttk.Button(self, text="Stop Download", style="TButton", command=self.stop_download)
         self.stop_button.grid(row=4, column=3, columnspan=2, padx=10, pady=10, sticky="EW")
 
         # Statistics display
@@ -238,15 +240,22 @@ class GBIFDownloader(tk.Tk):
         """
         self.stats_label.config(text="Download Status: Downloading...")
         self.start_button.config(state="disabled")
+        self.stop_button.config(state="enabled")
+        self.cancel_event = threading.Event()
         if self.notebook.index(self.notebook.select()) == 0:
             threading.Thread(target=self.download_images_query, name="download_thread", daemon=True).start()
         else:
             threading.Thread(target=self.download_images_doi, name="download_thread", daemon=True).start()
 
     def stop_download(self):
-        # Set the stop event to signal the thread to stop
-        # TODO: Implement a way to stop the download, requires changes to gbif-dl
-        pass
+        """
+        Signal the download thread to stop.
+        """
+        if self.cancel_event:
+            self.cancel_event.set()
+            self.stats_label.config(text="Download Status: Cancelled.")
+            self.start_button.config(state="normal")
+            self.stop_button.config(state="disabled")
 
     def download_images_query(self) -> None:
         """
@@ -267,7 +276,7 @@ class GBIFDownloader(tk.Tk):
             return
         
         data_generator = gbif_dl.api.generate_urls(queries=self.query)
-        self.download_stats = gbif_dl.dl_async.download(data_generator, root=self.output_dir.get())
+        self.download_stats = gbif_dl.dl_async.download(data_generator, root=self.output_dir.get(), cancel_event=self.cancel_event)
         # Set content of stats_text
         self.stats_label.config(text="Download Status: "+str(self.download_stats))
         self.start_button.config(state="normal")
@@ -281,9 +290,9 @@ class GBIFDownloader(tk.Tk):
         if not self.output_dir.get():
             self.stats_label.config(text="Download Status: DOI not entered.")
             self.start_button.config(state="normal")
-            return
+            
         data_generator = gbif_dl.dwca.generate_urls(self.doi_var.get(), dwca_root_path="dwcas")
-        self.download_stats = gbif_dl.dl_async.download(data_generator, root=self.output_dir.get())
+        self.download_stats = gbif_dl.dl_async.download(data_generator, root=self.output_dir.get(), cancel_event=self.cancel_event)
         self.stats_label.config(text="Download Status: "+str(self.download_stats))
         self.start_button.config(state="normal")
 

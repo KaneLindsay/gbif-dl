@@ -123,6 +123,7 @@ async def _download_queue(
     params: DownloadParams,
     progressbar: tqdm_asyncio = None,
     logger: logging.Logger = None,
+    cancel_event: Optional[asyncio.Event] = None,
 ):
     """Consumes items from download queue
 
@@ -133,8 +134,19 @@ async def _download_queue(
         logger (logging.Logger): Logger object
     """
     while True:
+
+        # Check for cancellation (threading.Event or asyncio.Event)
+        if cancel_event and getattr(cancel_event, "is_set", None) and cancel_event.is_set():
+            break
+        if cancel_event and getattr(cancel_event, "is_set", None) is None and cancel_event.is_set():
+            break
+
         batch = await queue.get()
         for sample in batch:
+            if cancel_event and getattr(cancel_event, "is_set", None) and cancel_event.is_set():
+                break
+            if cancel_event and getattr(cancel_event, "is_set", None) is None and cancel_event.is_set():
+                break
             failed = False
             try:
                 success = await download_single(sample, session, params)
@@ -164,6 +176,7 @@ async def _download_from_asyncgen(
     batch_size: int = 16,
     retries: int = 1,
     logger: logging.Logger = None,
+    cancel_event: Optional[asyncio.Event] = None,
 ):
     """Asynchronous downloader that takes an interable and downloads it
 
@@ -198,7 +211,7 @@ async def _download_from_asyncgen(
         workers = [
             loop.create_task(
                 _download_queue(
-                    queue, session, stats, params=params, progressbar=progressbar, logger=logger
+                    queue, session, stats, params=params, progressbar=progressbar, logger=logger, cancel_event=cancel_event
                 )
             )
             for _ in range(nb_workers)
@@ -230,6 +243,7 @@ def download(
     is_valid_file: Optional[Callable[[bytes], bool]] = None,
     proxy: Optional[str] = None,
     random_subsets: Optional[dict] = None,
+    cancel_event:Optional[asyncio.Event] = None,
 ):
     """Core download function that takes an interable (sync or async)
 
@@ -325,4 +339,5 @@ def download(
         retries=retries,
         logger=logger,
         params=params,
+        cancel_event=cancel_event,
     )
