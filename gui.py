@@ -1,13 +1,10 @@
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 import json
-import requests
 from PIL import Image, ImageTk
-import io
 import gbif_dl
 import threading
-import os 
-import time
+import os
 import random
 
 class GBIFDownloader(tk.Tk):
@@ -19,7 +16,7 @@ class GBIFDownloader(tk.Tk):
         self.download_stats = None
 
         # Set application icon
-        self.icon_path = "gbif_dl_icon.png"  # Placeholder path for the logo
+        self.icon_path = "img/gbif_dl_icon.png"  # Placeholder path for the logo
         self.icon_image = tk.PhotoImage(file=self.icon_path)
         self.iconphoto(False, self.icon_image)
 

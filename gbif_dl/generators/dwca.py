@@ -55,7 +55,9 @@ def dwca_generator(
                     if ext.data[mmqualname + "type"] == mediatype:
                         img_extensions.append(ext.data)
 
-            if one_media_per_occurrence:
+            if not img_extensions: # If there are no images for DWCA occurence
+                continue
+            if one_media_per_occurrence and len(img_extensions)>=1:
                 media = [random.choice(img_extensions)]
             else:
                 media = img_extensions
@@ -68,6 +70,7 @@ def dwca_generator(
 
                     if label is not None:
                         output_label = str(row.data.get(gbifqualname + label))
+                        print(output_label)
                         if output_label is None or not output_label:
                             continue
                     else:
